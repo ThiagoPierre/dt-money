@@ -1,28 +1,61 @@
 import { Container } from "./styles"
+import withdraw from '../../assets/outcome.svg'
+import income from '../../assets/income.svg'
+import total from '../../assets/total.svg'
+import { useTransactions } from "../../hooks/useTransactions"
 
 export const Summary = () => {
+
+    const {transactions} =  useTransactions()
+
+    const summary = transactions.reduce((acc, transaction) => {
+        if (transaction.type === 'deposit'){
+            acc.deposits += transaction.amount;
+            acc.total += transaction.amount;
+        } else {
+            acc.withdraws += transaction.amount;
+            acc.total -= transaction.amount;
+        }
+
+        return acc;
+    }, {
+        deposits: 0,
+        withdraws: 0,
+        total: 0
+    })
+    
     return (
         <Container>
             <div>
                 <header>
                     <p>Entradas</p>
-                    <img src="https://media-exp1.licdn.com/dms/image/C4D0BAQEC3xCi0hGBmg/company-logo_200_200/0/1625504442093?e=2159024400&v=beta&t=1HHeNZGsy7eqBdmuu6FtMWaKsuThPViIefYNV8t34eI" alt="" />
+                    <img src={income} alt="" />
                 </header>
-                <strong>R$1000,00</strong>
+                <strong>
+                {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(summary.deposits)}</strong>
             </div>
             <div>
                 <header>
                     <p>Saídas</p>
-                    <img src="https://media-exp1.licdn.com/dms/image/C4D0BAQEC3xCi0hGBmg/company-logo_200_200/0/1625504442093?e=2159024400&v=beta&t=1HHeNZGsy7eqBdmuu6FtMWaKsuThPViIefYNV8t34eI" alt="" />
+                    <img src={withdraw} alt="" />
                 </header>
-                <strong>- R$1000,00</strong>
+                <strong>- {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(summary.withdraws)}</strong>
             </div>
             <div className="highlight-background">
                 <header>
                     <p>Total</p>
-                    <img src="https://media-exp1.licdn.com/dms/image/C4D0BAQEC3xCi0hGBmg/company-logo_200_200/0/1625504442093?e=2159024400&v=beta&t=1HHeNZGsy7eqBdmuu6FtMWaKsuThPViIefYNV8t34eI" alt="" />
+                    <img src={total} alt="" />
                 </header>
-                <strong>R$0</strong>
+                <strong>{new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(summary.total)}</strong>
             </div>
         </Container>
     )
